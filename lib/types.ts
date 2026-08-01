@@ -176,3 +176,38 @@ export interface DoctorRequest {
   bio?: string;
   available?: boolean;
 }
+
+export interface DoctorOnboardRequest {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  departmentId: number;
+  specialization: string;
+  experienceYears: number;
+  consultationFee: number;
+  bio?: string;
+}
+
+export interface UserSummary {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+}
+
+export interface PatientRequest {
+  userId: number;
+  dateOfBirth: string;
+  bloodGroup: string;
+  address: string;
+  emergencyContact: string;
+  emergencyContactName: string;
+  medicalHistory?: string;
+}
+
+export interface BillRequest {
+  appointmentId: number;
+  additionalCharges?: number;
+  notes?: string;
+}
