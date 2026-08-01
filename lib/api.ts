@@ -120,6 +120,14 @@ export async function searchDoctors(params: {
   return data;
 }
 
+export async function getAvailableSlots(doctorId: number, date: string) {
+  const { data } = await api.get<string[]>(
+    `/doctors/${doctorId}/available-slots`,
+    { params: { date } }
+  );
+  return data;
+}
+
 // ---------- Patient profile ----------
 export async function getPatientByUserId(userId: number) {
   const { data } = await api.get<PatientResponse>(
