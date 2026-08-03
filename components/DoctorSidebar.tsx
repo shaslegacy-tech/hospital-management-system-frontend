@@ -10,6 +10,7 @@ import {
   UserCircle2,
   HeartPulse,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
@@ -19,6 +20,7 @@ const nav = [
   { href: "/doctor/schedule", label: "Schedule", icon: CalendarClock },
   { href: "/doctor/patients", label: "Patients", icon: Users },
   { href: "/doctor/profile", label: "Profile", icon: UserCircle2 },
+  { href: "/doctor/records", label: "Records", icon: FileText },
 ];
 
 export function DoctorSidebar() {
@@ -48,7 +50,7 @@ export function DoctorSidebar() {
         </div>
         <div className="leading-tight">
           <span className="block font-display text-lg font-semibold text-ink-900">
-            MedCare
+            AarogyaAI
           </span>
           <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-500">
             Doctor
