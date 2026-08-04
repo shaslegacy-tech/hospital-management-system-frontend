@@ -21,6 +21,7 @@ import type {
   PaymentOrder,
   PrescriptionRequest,
   Role,
+  SymptomCheckResult,
   UserSummary,
 } from "./types";
 
@@ -731,4 +732,9 @@ export async function getPatientFilesByType(
   return res.data;
 }
 
-
+export async function checkSymptoms(symptoms: string) {
+  const { data } = await api.post<SymptomCheckResult>("/ai/symptom-check", {
+    symptoms,
+  });
+  return data;
+}
