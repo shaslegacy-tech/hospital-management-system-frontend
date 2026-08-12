@@ -94,6 +94,7 @@ export interface MedicalRecordResponse {
   notes: string;
   prescriptions: PrescriptionResponse[];
   createdAt: string;
+  patientSummary: string | null;
 }
 
 export interface BillResponse {

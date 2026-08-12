@@ -12,6 +12,7 @@ import { useAuth } from "@/lib/auth-context";
 import { getPatientHistory } from "@/lib/api";
 import { MedicalRecordResponse } from "@/lib/types";
 import { formatDate } from "@/lib/format";
+import { VisitSummaryCard } from "@/components/VisitSummaryCard";
 
 export default function RecordsPage() {
   const { patient } = useAuth();
@@ -92,6 +93,10 @@ export default function RecordsPage() {
                             {r.treatment}
                           </p>
                         </div>
+                         <VisitSummaryCard
+                            recordId={r.id}
+                            initialSummary={r.patientSummary}
+                          />
                         {r.notes && (
                           <div>
                             <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">

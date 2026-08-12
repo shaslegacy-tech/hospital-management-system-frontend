@@ -738,3 +738,8 @@ export async function checkSymptoms(symptoms: string) {
   });
   return data;
 }
+
+export async function explainRecord(recordId: number) {
+  const { data } = await api.post<string>(`/records/${recordId}/explain`);
+  return data;
+}
