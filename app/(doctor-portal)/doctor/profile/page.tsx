@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useAuth } from "@/lib/auth-context";
 import { formatCurrency, formatTime, initials } from "@/lib/format";
+import { DoctorReviewsList } from "@/components/DoctorReviewsList";
 
 export default function DoctorProfilePage() {
   const { user, doctor } = useAuth();
@@ -76,6 +77,14 @@ export default function DoctorProfilePage() {
             <p className="text-sm text-ink-700">{doctor.bio}</p>
           </Card>
         )}
+
+      {doctor && (
+        <DoctorReviewsList
+          doctorId={doctor.id}
+          averageRating={doctor.averageRating}
+          reviewCount={doctor.reviewCount}
+        />
+      )}
       </div>
     </>
   );

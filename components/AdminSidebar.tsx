@@ -15,6 +15,7 @@ import {
   Clock,
   UserCog,
   ClipboardList,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
@@ -39,6 +40,7 @@ const staticNav: NavItem[] = [
   { href: "/admin/users",             label: "Users",             icon: UserCog },
   { href: "/admin/bills",             label: "Bills",             icon: Receipt },
   { href: "/admin/records",           label: "Records",           icon: ClipboardList },
+  { href: "/admin/insights",          label: "AI Insights",       icon: Sparkles },
 ];
 
 // ─── Hook — live pending count ────────────────────────────

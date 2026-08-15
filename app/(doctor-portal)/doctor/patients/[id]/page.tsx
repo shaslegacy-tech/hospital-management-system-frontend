@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { AddPrescriptionModal } from "@/components/AddPrescriptionModal";
 import { PatientFilesSection } from "@/components/PatientFilesSection";
+import { AddRecordCard } from "@/components/AddRecordCard";
 import { useToast } from "@/lib/toast-context";
 import {
   createMedicalRecord,
@@ -283,76 +284,76 @@ function DoctorPatientDetailPage() {
   );
 }
 
-function AddRecordCard({
-  appointmentId,
-  onCreated,
-}: {
-  appointmentId: number;
-  onCreated: () => void;
-}) {
-  const [diagnosis, setDiagnosis] = useState("");
-  const [treatment, setTreatment] = useState("");
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+// function AddRecordCard({
+//   appointmentId,
+//   onCreated,
+// }: {
+//   appointmentId: number;
+//   onCreated: () => void;
+// }) {
+//   const [diagnosis, setDiagnosis] = useState("");
+//   const [treatment, setTreatment] = useState("");
+//   const [notes, setNotes] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      await createMedicalRecord({ appointmentId, diagnosis, treatment, notes });
-      onCreated();
-    } catch (err) {
-      setError(apiErrorMessage(err, "Couldn't save the record. Try again."));
-    } finally {
-      setLoading(false);
-    }
-  }
+//   async function handleSubmit(e: React.FormEvent) {
+//     e.preventDefault();
+//     setError("");
+//     setLoading(true);
+//     try {
+//       await createMedicalRecord({ appointmentId, diagnosis, treatment, notes });
+//       onCreated();
+//     } catch (err) {
+//       setError(apiErrorMessage(err, "Couldn't save the record. Try again."));
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
 
-  return (
-    <Card className="border-brand-200 bg-brand-50/40">
-      <h3 className="mb-3 font-display text-sm font-semibold text-ink-900">
-        Add medical record for this visit
-      </h3>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">Diagnosis</label>
-          <input
-            value={diagnosis}
-            onChange={(e) => setDiagnosis(e.target.value)}
-            required
-            placeholder="e.g. Acute bronchitis"
-            className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">Treatment</label>
-          <textarea
-            value={treatment}
-            onChange={(e) => setTreatment(e.target.value)}
-            required
-            rows={2}
-            placeholder="Describe the treatment plan"
-            className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">Notes (optional)</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={2}
-            className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
-        </div>
+//   return (
+//     <Card className="border-brand-200 bg-brand-50/40">
+//       <h3 className="mb-3 font-display text-sm font-semibold text-ink-900">
+//         Add medical record for this visit
+//       </h3>
+//       <form onSubmit={handleSubmit} className="space-y-3">
+//         <div className="flex flex-col gap-1.5">
+//           <label className="text-sm font-medium text-ink-700">Diagnosis</label>
+//           <input
+//             value={diagnosis}
+//             onChange={(e) => setDiagnosis(e.target.value)}
+//             required
+//             placeholder="e.g. Acute bronchitis"
+//             className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+//           />
+//         </div>
+//         <div className="flex flex-col gap-1.5">
+//           <label className="text-sm font-medium text-ink-700">Treatment</label>
+//           <textarea
+//             value={treatment}
+//             onChange={(e) => setTreatment(e.target.value)}
+//             required
+//             rows={2}
+//             placeholder="Describe the treatment plan"
+//             className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+//           />
+//         </div>
+//         <div className="flex flex-col gap-1.5">
+//           <label className="text-sm font-medium text-ink-700">Notes (optional)</label>
+//           <textarea
+//             value={notes}
+//             onChange={(e) => setNotes(e.target.value)}
+//             rows={2}
+//             className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+//           />
+//         </div>
 
-        {error && <Alert tone="error">{error}</Alert>}
+//         {error && <Alert tone="error">{error}</Alert>}
 
-        <Button type="submit" loading={loading}>
-          Save record
-        </Button>
-      </form>
-    </Card>
-  );
-}
+//         <Button type="submit" loading={loading}>
+//           Save record
+//         </Button>
+//       </form>
+//     </Card>
+//   );
+// }

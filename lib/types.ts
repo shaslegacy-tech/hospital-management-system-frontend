@@ -41,6 +41,8 @@ export interface DoctorResponse {
   workStartTime: string;
   workEndTime: string;
   slotDurationMinutes: number;
+  averageRating: number | null;
+  reviewCount: number;
   createdAt: string;
 }
 
@@ -231,6 +233,16 @@ export interface PaymentOrder {
   billId: number;
 }
 
+export interface ReviewItem {
+  id: number;
+  appointmentId: number;
+  patientName: string;
+  doctorId: number;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
 export interface NotificationItem {
   id: number;
   message: string;
@@ -246,4 +258,15 @@ export interface SymptomCheckResult {
   explanation: string;
   urgencyLevel: "LOW" | "MEDIUM" | "HIGH";
   disclaimer: string;
+}
+
+export interface ClinicalNotesDraft {
+  diagnosis: string;
+  treatment: string;
+  notice: string;
+}
+
+export interface InsightMessage {
+  role: "user" | "assistant";
+  content: string;
 }

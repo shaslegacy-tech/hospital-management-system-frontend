@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
-import { cancelAppointment, getPatientAppointments } from "@/lib/api";
+import { cancelAppointment, getPatientAppointments, checkReviewExists } from "@/lib/api";
 import { AppointmentResponse } from "@/lib/types";
 import Link from "next/link";
+import { RateVisitModal } from "@/components/RateVisitModal";
 
 type Tab = "upcoming" | "past" | "cancelled";
 
@@ -26,17 +27,49 @@ export default function AppointmentsPage() {
   const [cancelTarget, setCancelTarget] = useState<number | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
+  const [rateTarget, setRateTarget] = useState<AppointmentResponse | null>(null);
+  const [reviewedIds, setReviewedIds] = useState<Set<number>>(new Set());
+
   async function load() {
     if (!patient) return;
     setLoading(true);
     const data = await getPatientAppointments(patient.id, 0, 100);
     setAppointments(data.content);
+
+    const completed = data.content.filter((a) => a.status === "COMPLETED");
+    const checks = await Promise.all(
+     completed.map((a) => checkReviewExists(a.id).then((exists) => [a.id, exists] as const))
+    );
+
+    setReviewedIds(new Set(checks.filter(([, exists]) => exists).map(([id]) => id)));
     setLoading(false);
   }
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let isMounted = true;
+    
+    const fetchAppointments = async () => {
+      if (!patient) return;
+      setLoading(true);
+      const data = await getPatientAppointments(patient.id, 0, 100);
+      if (!isMounted) return;
+      setAppointments(data.content);
+
+      const completed = data.content.filter((a) => a.status === "COMPLETED");
+      const checks = await Promise.all(
+       completed.map((a) => checkReviewExists(a.id).then((exists) => [a.id, exists] as const))
+      );
+
+      if (!isMounted) return;
+      setReviewedIds(new Set(checks.filter(([, exists]) => exists).map(([id]) => id)));
+      setLoading(false);
+    };
+
+    fetchAppointments();
+
+    return () => {
+      isMounted = false;
+    };
   }, [patient]);
 
   async function handleCancel() {
@@ -123,11 +156,20 @@ export default function AppointmentsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((a) => (
-              <AppointmentTicket
-                key={a.id}
-                appointment={a}
-                onCancel={tab === "upcoming" ? () => setCancelTarget(a.id) : undefined}
-              />
+              <div key={a.id}>
+                <AppointmentTicket
+                  appointment={a}
+                  onCancel={tab === "upcoming" ? () => setCancelTarget(a.id) : undefined}
+                />
+                {a.status === "COMPLETED" && !reviewedIds.has(a.id) && (
+                  <button
+                    onClick={() => setRateTarget(a)}
+                    className="mt-2 text-xs font-medium text-brand-700 hover:text-brand-800"
+                  >
+                    Rate this visit
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -141,6 +183,17 @@ export default function AppointmentsPage() {
         loading={cancelling}
         onConfirm={handleCancel}
         onClose={() => setCancelTarget(null)}
+      />
+
+      <RateVisitModal
+        appointment={rateTarget}
+        onClose={() => setRateTarget(null)}
+        onSubmitted={() => {
+          if (rateTarget) {
+            setReviewedIds((prev) => new Set(prev).add(rateTarget.id));
+          }
+          showToast("Thanks for your feedback!", "success"); // if useToast is available here
+        }}
       />
     </>
   );

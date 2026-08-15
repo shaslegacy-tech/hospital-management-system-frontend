@@ -42,9 +42,13 @@ export function AppointmentDetailModal({
   useEffect(() => {
     // check for null/undefined explicitly so numeric 0 is allowed
     if (appointmentId == null) {
-      setAppointment(null);
-      setBill(null);
-      setError("");
+      // avoid calling setState synchronously within the effect to prevent
+      // cascading renders — schedule the updates microtask-wise
+      Promise.resolve().then(() => {
+        setAppointment(null);
+        setBill(null);
+        setError("");
+      });
       return;
     }
 

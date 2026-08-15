@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DoctorResponse } from "@/lib/types";
 import { formatCurrency, initials } from "@/lib/format";
+import { StarRating } from "@/components/StarRating";
 
 export function DoctorCard({
   doctor,
@@ -25,6 +26,12 @@ export function DoctorCard({
           <p className="truncate text-xs text-ink-500">
             {doctor.specialization}
           </p>
+          <StarRating
+            value={doctor.averageRating}
+            showValue
+            reviewCount={doctor.reviewCount}
+            size="sm"
+          />
         </div>
         <Badge tone={doctor.available ? "teal" : "slate"} className="ml-auto flex-shrink-0">
           {doctor.available ? "Available" : "Unavailable"}

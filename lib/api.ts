@@ -5,6 +5,7 @@ import type {
   AuthResponse,
   BillRequest,
   BillResponse,
+  ClinicalNotesDraft,
   DashboardResponse,
   DepartmentRequest,
   DepartmentResponse,
@@ -20,6 +21,7 @@ import type {
   PatientResponse,
   PaymentOrder,
   PrescriptionRequest,
+  ReviewItem,
   Role,
   SymptomCheckResult,
   UserSummary,
@@ -220,8 +222,6 @@ export async function deletePatientFile(id: number) {
   await api.delete(`/files/${id}`);
 }
 
-// Files are served from a protected endpoint, so a plain <a href> won't
-// include the auth header. Fetch as a blob and trigger the download manually.
 export async function downloadPatientFileBlob(
   downloadUrl: string,
   filename: string
@@ -732,6 +732,27 @@ export async function getPatientFilesByType(
   return res.data;
 }
 
+export async function createReview(payload: {
+  appointmentId: number;
+  rating: number;
+  comment?: string;
+}) {
+  const { data } = await api.post<ReviewItem>("/reviews", payload);
+  return data;
+}
+ 
+export async function getDoctorReviews(doctorId: number) {
+  const { data } = await api.get<ReviewItem[]>(`/reviews/doctor/${doctorId}`);
+  return data;
+}
+ 
+export async function checkReviewExists(appointmentId: number) {
+  const { data } = await api.get<boolean>(
+    `/reviews/appointment/${appointmentId}/exists`
+  );
+  return data;
+}
+
 export async function checkSymptoms(symptoms: string) {
   const { data } = await api.post<SymptomCheckResult>("/ai/symptom-check", {
     symptoms,
@@ -742,4 +763,19 @@ export async function checkSymptoms(symptoms: string) {
 export async function explainRecord(recordId: number) {
   const { data } = await api.post<string>(`/records/${recordId}/explain`);
   return data;
+}
+
+export async function draftClinicalNotes(quickNotes: string) {
+  const { data } = await api.post<ClinicalNotesDraft>(
+    "/ai/clinical-notes-draft",
+    { quickNotes }
+  );
+  return data;
+}
+
+export async function askAdminInsights(question: string) {
+  const { data } = await api.post<{ answer: string }>("/ai/admin-insights", {
+    question,
+  });
+  return data.answer;
 }
