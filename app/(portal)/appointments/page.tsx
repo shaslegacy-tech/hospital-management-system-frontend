@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 import { cancelAppointment, getPatientAppointments, checkReviewExists } from "@/lib/api";
 import { AppointmentResponse } from "@/lib/types";
 import Link from "next/link";
@@ -29,6 +30,8 @@ export default function AppointmentsPage() {
 
   const [rateTarget, setRateTarget] = useState<AppointmentResponse | null>(null);
   const [reviewedIds, setReviewedIds] = useState<Set<number>>(new Set());
+
+  const { t } = useTranslation();
 
   async function load() {
     if (!patient) return;
@@ -77,10 +80,10 @@ export default function AppointmentsPage() {
     setCancelling(true);
     try {
       await cancelAppointment(cancelTarget);
-      showToast("Appointment cancelled.", "success");
+      showToast(t("appointments.cancelledSuccess") + " ✓", "success");
       await load();
     } catch {
-      showToast("Couldn't cancel this appointment. Try again.", "error");
+      showToast(t("appointments.cancelError"), "error");
     } finally {
       setCancelling(false);
       setCancelTarget(null);
@@ -103,14 +106,16 @@ export default function AppointmentsPage() {
   }, [appointments, tab]);
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "upcoming", label: "Upcoming" },
-    { key: "past", label: "Past visits" },
-    { key: "cancelled", label: "Cancelled" },
+    { key: "upcoming", label: t("appointments.upcoming") },
+    { key: "past", label: t("appointments.past") },
+    { key: "cancelled", label: t("appointments.cancelled") },
   ];
 
   return (
     <>
-      <Topbar title="Appointments" subtitle="All your visits, in one place" />
+      <Topbar 
+      title={t("appointments.title")}
+      subtitle={t("appointments.subtitle")} />
 
       <div className="space-y-6 px-6 pb-10 lg:px-10">
         <div className="flex gap-1 rounded-2xl border border-ink-100 bg-white p-1.5 w-fit shadow-card">
@@ -139,16 +144,20 @@ export default function AppointmentsPage() {
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={CalendarDays}
-            title={`No ${tab} appointments`}
+            title={
+              tab === "upcoming"
+                ? t("appointments.emptyUpcoming")
+                : t("appointments.emptyTab")
+            }
             description={
               tab === "upcoming"
-                ? "You don't have anything scheduled. Book a visit whenever you're ready."
-                : `Your ${tab} appointments will appear here.`
+                ? t("appointments.emptyUpcomingDesc")
+                : t("appointments.emptyTab")
             }
             action={
               tab === "upcoming" ? (
                 <Link href="/doctors">
-                  <Button>Find a doctor</Button>
+                  <Button>{t("dashboard.findADoctor")}</Button>
                 </Link>
               ) : undefined
             }
@@ -166,7 +175,7 @@ export default function AppointmentsPage() {
                     onClick={() => setRateTarget(a)}
                     className="mt-2 text-xs font-medium text-brand-700 hover:text-brand-800"
                   >
-                    Rate this visit
+                    {t("appointments.rateVisit")}
                   </button>
                 )}
               </div>
@@ -177,9 +186,9 @@ export default function AppointmentsPage() {
 
       <ConfirmDialog
         open={cancelTarget !== null}
-        title="Cancel appointment?"
-        description="This will free up the slot and notify your doctor. You can always book a new one."
-        confirmLabel="Yes, cancel it"
+        title={t("appointments.cancelConfirmTitle")}
+        description={t("appointments.cancelConfirmDescription")}
+        confirmLabel={t("appointments.confirmCancel")}
         loading={cancelling}
         onConfirm={handleCancel}
         onClose={() => setCancelTarget(null)}
@@ -192,7 +201,10 @@ export default function AppointmentsPage() {
           if (rateTarget) {
             setReviewedIds((prev) => new Set(prev).add(rateTarget.id));
           }
-          showToast("Thanks for your feedback!", "success"); // if useToast is available here
+          showToast(
+            t("appointments.feedbackThanks") + " ✓",
+            "success"
+          );
         }}
       />
     </>

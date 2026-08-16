@@ -48,6 +48,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+html[lang="hi"] body {
+  font-family: var(--font-devanagari), var(--font-body), sans-serif;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

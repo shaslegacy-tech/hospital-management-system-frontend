@@ -13,12 +13,15 @@ import { getPatientHistory } from "@/lib/api";
 import { MedicalRecordResponse } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import { VisitSummaryCard } from "@/components/VisitSummaryCard";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function RecordsPage() {
   const { patient } = useAuth();
   const [records, setRecords] = useState<MedicalRecordResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<number | null>(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!patient) return;
@@ -38,8 +41,8 @@ export default function RecordsPage() {
   return (
     <>
       <Topbar
-        title="Medical records"
-        subtitle="Diagnoses, treatments and prescriptions from your visits"
+        title={t("records.title")}
+        subtitle={t("records.subtitle")}
       />
 
       <div className="space-y-4 px-6 pb-10 lg:px-10">
@@ -52,8 +55,8 @@ export default function RecordsPage() {
         ) : records.length === 0 ? (
           <EmptyState
             icon={FileText}
-            title="No medical records yet"
-            description="Once a doctor completes your visit, the diagnosis and treatment notes will appear here."
+            title={t("records.noRecords")}
+            description={t("records.noRecordsDescription")}
           />
         ) : (
           <div className="relative space-y-4 border-l-2 border-dashed border-ink-100 pl-6">
@@ -87,7 +90,7 @@ export default function RecordsPage() {
                       <div className="space-y-4 border-t border-ink-100 px-5 py-4">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-                            Treatment
+                            {t("records.treatment")}
                           </p>
                           <p className="mt-1 text-sm text-ink-700">
                             {r.treatment}
@@ -100,7 +103,7 @@ export default function RecordsPage() {
                         {r.notes && (
                           <div>
                             <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-                              Notes
+                              {t("records.notes")}
                             </p>
                             <p className="mt-1 text-sm text-ink-700">
                               {r.notes}
@@ -111,7 +114,7 @@ export default function RecordsPage() {
                           <div>
                             <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ink-500">
                               <Pill className="h-3.5 w-3.5" />
-                              Prescriptions
+                              {t("records.prescriptions")}
                             </p>
                             <div className="space-y-2">
                               {r.prescriptions.map((p) => (

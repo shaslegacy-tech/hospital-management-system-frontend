@@ -8,12 +8,15 @@ import { AuthShell } from "@/components/AuthShell";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { login, apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { setSession } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -51,34 +54,39 @@ export default function LoginPage() {
       setLoading(false);
     } catch (err) {
       setError(apiErrorMessage(err, "Couldn't sign you in. Check your details and try again."));
-    } finally {
       setLoading(false);
     }
   }
 
   return (
     <AuthShell>
-      <div className="mb-8 flex items-center gap-2 lg:hidden">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white">
-          <HeartPulse className="h-5 w-5" />
+      <div className="mb-6 flex items-center justify-between lg:hidden">
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white">
+            <HeartPulse className="h-5 w-5" />
+          </div>
+          <span className="font-display text-lg font-semibold text-ink-900">
+            MedCare
+          </span>
         </div>
-        <span className="font-display text-lg font-semibold text-ink-900">
-          AarogyaAI
-        </span>
+      </div>
+
+      <div className="mb-2 flex justify-end">
+        <LanguageSwitcher />
       </div>
 
       <h2 className="font-display text-2xl font-semibold text-ink-900">
-        Welcome back
+        {t("auth.welcomeBack")}
       </h2>
       <p className="mt-1.5 text-sm text-ink-500">
-        Sign in to manage your appointments and records.
+        {t("auth.signInSubtitle")}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-7 space-y-4">
         <Input
           id="email"
           type="email"
-          label="Email"
+          label={t("auth.email")}
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +95,7 @@ export default function LoginPage() {
         <Input
           id="password"
           type="password"
-          label="Password"
+          label={t("auth.password")}
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -103,17 +111,17 @@ export default function LoginPage() {
           loading={loading}
         >
           <LogIn className="h-4 w-4" />
-          Sign in
+          {t("auth.signIn")}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-500">
-        New here?{" "}
+        {t("auth.newHere")}{" "}
         <Link
           href="/register"
           className="font-semibold text-brand-700 hover:text-brand-800"
         >
-          Create a patient account
+          {t("auth.createAccount")}
         </Link>
       </p>
     </AuthShell>
