@@ -270,3 +270,14 @@ export interface InsightMessage {
   role: "user" | "assistant";
   content: string;
 }
+
+export interface AuditLogItem {
+  id: number;
+  userName: string;
+  userRole: string | null;
+  action: string;
+  entityType: string;
+  entityId: number;
+  details: string;
+  createdAt: string;
+}

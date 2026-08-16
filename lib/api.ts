@@ -2,6 +2,7 @@ import axios from "axios";
 import type {
   AppointmentResponse,
   AppointmentStatus,
+  AuditLogItem,
   AuthResponse,
   BillRequest,
   BillResponse,
@@ -778,4 +779,15 @@ export async function askAdminInsights(question: string) {
     question,
   });
   return data.answer;
+}
+
+export async function getAuditLogs(params: {
+  action?: string;
+  page?: number;
+  size?: number;
+}) {
+  const { data } = await api.get<Page<AuditLogItem>>("/audit-logs", {
+    params,
+  });
+  return data;
 }
