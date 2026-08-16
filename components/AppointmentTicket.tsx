@@ -4,6 +4,7 @@ import { Clock, MapPin } from "lucide-react";
 import { AppointmentResponse } from "@/lib/types";
 import { daysUntil, formatTime, initials } from "@/lib/format";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const deptColors: Record<string, string> = {
   default: "#0F9488",
@@ -24,6 +25,7 @@ export function AppointmentTicket({
   appointment: AppointmentResponse;
   onCancel?: (id: number) => void;
 }) {
+  const { t } = useTranslation();
   const color = deptColor(appointment.departmentName);
   const [month, day] = new Date(appointment.appointmentDate)
     .toDateString()
@@ -90,7 +92,7 @@ export function AppointmentTicket({
               onClick={() => onCancel(appointment.id)}
               className="mt-1 text-left text-xs font-medium text-coral-500 hover:text-coral-600"
             >
-              Cancel appointment
+              {t("appointments.cancelAppointment")}
             </button>
           )}
       </div>

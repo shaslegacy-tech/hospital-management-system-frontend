@@ -12,11 +12,14 @@ import { useAuth } from "@/lib/auth-context";
 import { getPatientBills } from "@/lib/api";
 import { BillResponse } from "@/lib/types";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function BillsPage() {
   const { patient } = useAuth();
   const [bills, setBills] = useState<BillResponse[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { t } = useTranslation();
 
   async function load() {
     if (!patient) return;
@@ -42,7 +45,10 @@ export default function BillsPage() {
 
   return (
     <>
-      <Topbar title="Bills" subtitle="Charges from your appointments" />
+      <Topbar
+        title={t("bills.title")}
+        subtitle={t("bills.subtitle")}
+      />
 
       <div className="space-y-6 px-6 pb-10 lg:px-10">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -54,7 +60,9 @@ export default function BillsPage() {
               <p className="font-display text-xl font-semibold text-ink-900">
                 {loading ? "—" : formatCurrency(totalPaid)}
               </p>
-              <p className="text-xs text-ink-500">Total paid</p>
+              <p className="text-xs text-ink-500">
+                {t("bills.totalPaid")}
+              </p>
             </div>
           </Card>
           <Card className="flex items-center gap-4">
@@ -65,7 +73,7 @@ export default function BillsPage() {
               <p className="font-display text-xl font-semibold text-ink-900">
                 {loading ? "—" : formatCurrency(totalPending)}
               </p>
-              <p className="text-xs text-ink-500">Pending — pay online below</p>
+              <p className="text-xs text-ink-500">{t("bills.pendingPayment")}</p>
             </div>
           </Card>
         </div>
@@ -75,17 +83,17 @@ export default function BillsPage() {
         ) : bills.length === 0 ? (
           <EmptyState
             icon={Receipt}
-            title="No bills yet"
-            description="Bills are generated automatically after a completed visit."
+            title={t("bills.noBills")}
+            description={t("bills.noBillsDescription")}
           />
         ) : (
           <Card className="overflow-hidden p-0">
             <div className="hidden grid-cols-[1fr_1fr_auto_auto_auto] gap-4 border-b border-ink-100 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-ink-500 sm:grid">
-              <span>Doctor</span>
-              <span>Date</span>
-              <span className="text-right">Total</span>
-              <span className="text-right">Status</span>
-              <span className="text-right">Action</span>
+              <span>{t("bills.doctor")}</span>
+              <span>{t("bills.date")}</span>
+              <span className="text-right">{t("bills.total")}</span>
+              <span className="text-right">{t("bills.status")}</span>
+              <span className="text-right">{t("bills.action")}</span>
             </div>
             <div className="divide-y divide-ink-100">
               {bills.map((b) => (

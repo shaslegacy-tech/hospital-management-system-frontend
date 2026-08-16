@@ -15,21 +15,23 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
-
-const nav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/doctors", label: "Find Doctors", icon: Stethoscope },
-  { href: "/appointments", label: "Appointments", icon: CalendarDays },
-  { href: "/records", label: "Medical Records", icon: FileText },
-  { href: "/bills", label: "Bills", icon: Receipt },
-  { href: "/profile", label: "Profile", icon: UserCircle2 },
-];
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { t } = useTranslation();
   const navRef = useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = useState({ top: 0, height: 0, opacity: 0 });
+
+  const nav = [
+    { href: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/doctors", label: t("nav.findDoctors"), icon: Stethoscope },
+    { href: "/appointments", label: t("nav.appointments"), icon: CalendarDays },
+    { href: "/records", label: t("nav.medicalRecords"), icon: FileText },
+    { href: "/bills", label: t("nav.bills"), icon: Receipt },
+    { href: "/profile", label: t("nav.profile"), icon: UserCircle2 },
+  ];
 
   useEffect(() => {
     const activeEl = navRef.current?.querySelector<HTMLAnchorElement>(
@@ -42,7 +44,7 @@ export function Sidebar() {
         opacity: 1,
       });
     }
-  }, [pathname]);
+  }, [pathname, nav.length]);
 
   return (
     <aside className="hidden w-64 flex-shrink-0 flex-col border-r border-ink-100 bg-white px-4 py-6 lg:flex">
@@ -95,7 +97,7 @@ export function Sidebar() {
         className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-500 transition-colors hover:bg-coral-50 hover:text-coral-600"
       >
         <LogOut className="h-4.5 w-4.5" />
-        Log out
+        {t("common.logout")}
       </button>
     </aside>
   );

@@ -20,6 +20,7 @@ import { AppointmentTicket } from "@/components/AppointmentTicket";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 import {
   cancelAppointment,
   getPatientAppointments,
@@ -31,6 +32,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 export default function DashboardPage() {
   const { user, patient } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [bills, setBills] = useState<BillResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +80,7 @@ export default function DashboardPage() {
     setCancelling(true);
     try {
       await cancelAppointment(cancelTarget);
-      showToast("Appointment cancelled.", "success");
+      showToast(t("appointments.cancelAppointment") + " ✓", "success");
       await load();
     } catch {
       showToast("Couldn't cancel this appointment. Try again.", "error");
@@ -91,8 +93,8 @@ export default function DashboardPage() {
   return (
     <>
       <Topbar
-        title={`Good to see you, ${user?.name?.split(" ")[0]}`}
-        subtitle="Here's what's happening with your care"
+        title={`${t("dashboard.goodToSeeYou")}, ${user?.name?.split(" ")[0]}`}
+        subtitle={t("dashboard.subtitle")}
       />
 
       <div className="space-y-8 px-6 pb-10 lg:px-10">
@@ -100,40 +102,40 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatCard
             icon={CalendarDays}
-            label="Upcoming appointments"
+            label={t("dashboard.upcomingAppointments")}
             value={loading ? "—" : String(upcoming.length)}
             tone="teal"
           />
           <StatCard
             icon={Receipt}
-            label="Pending bills"
+            label={t("dashboard.pendingBills")}
             value={loading ? "—" : formatCurrency(pendingTotal)}
             tone="amber"
           />
           <StatCard
             icon={Stethoscope}
-            label="Total visits"
+            label={t("dashboard.totalVisits")}
             value={loading ? "—" : String(completedVisits.length)}
             tone="violet"
           />
           <StatCard
             icon={FileText}
-            label="Last checkup"
+            label={t("dashboard.lastCheckup")}
             value={loading ? "—" : lastVisit ? formatDate(lastVisit.appointmentDate) : "—"}
             tone="coral"
           />
         </div>
 
-        {/* Upcoming appointments — signature ticket row */}
+        {/* Upcoming appointments */}
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-lg font-semibold text-ink-900">
-              Upcoming appointments
+              {t("dashboard.upcomingAppointments")}
             </h2>
             <Link href="/doctors">
               <Button size="sm" variant="secondary">
                 <Plus className="h-4 w-4" />
-                Book new
+                {t("common.bookNew")}
               </Button>
             </Link>
           </div>
@@ -146,16 +148,16 @@ export default function DashboardPage() {
           ) : upcoming.length === 0 ? (
             <EmptyState
               icon={CalendarDays}
-              title="No upcoming appointments"
-              description="Find a doctor and book your next visit — it only takes a minute."
+              title={t("dashboard.noAppointments")}
+              description={t("dashboard.noAppointmentsDesc")}
               action={
                 <Link href="/doctors">
-                  <Button>Find a doctor</Button>
+                  <Button>{t("dashboard.findADoctor")}</Button>
                 </Link>
               }
             />
           ) : (
-            <div className="flex gap-4 overflow-x-auto pb-2">
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
               {upcoming.map((a) => (
                 <AppointmentTicket
                   key={a.id}
@@ -171,13 +173,13 @@ export default function DashboardPage() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-lg font-semibold text-ink-900">
-              Recent bills
+              {t("dashboard.recentBills")}
             </h2>
             <Link
               href="/bills"
               className="text-sm font-medium text-brand-700 hover:text-brand-800"
             >
-              View all
+              {t("common.viewAll")}
             </Link>
           </div>
 
@@ -186,8 +188,8 @@ export default function DashboardPage() {
           ) : bills.length === 0 ? (
             <EmptyState
               icon={Receipt}
-              title="No bills yet"
-              description="Bills from your completed visits will show up here."
+              title={t("dashboard.noBills")}
+              description={t("dashboard.noBillsDesc")}
             />
           ) : (
             <Card className="divide-y divide-ink-100 p-0">

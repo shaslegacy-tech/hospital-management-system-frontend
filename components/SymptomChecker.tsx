@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/cn";
 import { checkSymptoms, apiErrorMessage } from "@/lib/api";
 import { SymptomCheckResult } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const urgencyStyles: Record<SymptomCheckResult["urgencyLevel"], string> = {
   LOW: "bg-brand-100 text-brand-800",
@@ -26,6 +27,8 @@ export function SymptomChecker({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<SymptomCheckResult | null>(null);
+
+  const { t } = useTranslation();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,10 +58,10 @@ export function SymptomChecker({
           </div>
           <div>
             <p className="font-display text-sm font-semibold text-ink-900">
-              Not sure who to see?
+              {t("ai.notSureWhoToSee")}
             </p>
             <p className="text-xs text-ink-500">
-              Describe your symptoms and we'll suggest a department
+              {t("ai.describeSymptoms")}
             </p>
           </div>
         </div>
@@ -78,12 +81,12 @@ export function SymptomChecker({
               onChange={(e) => setSymptoms(e.target.value)}
               rows={3}
               maxLength={1000}
-              placeholder="e.g. I've had a persistent cough and mild fever for 3 days..."
+              placeholder={t("ai.symptomPlaceholder")}
               className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-500/70 focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
             <Button type="submit" size="sm" loading={loading} disabled={!symptoms.trim()}>
               <Sparkles className="h-3.5 w-3.5" />
-              Get a suggestion
+              {t("ai.getSuggestion")}
             </Button>
           </form>
 
@@ -95,18 +98,17 @@ export function SymptomChecker({
                 <Alert tone="error">
                   <span className="flex items-start gap-1.5">
                     <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                    {result.explanation} Please seek emergency care immediately
-                    rather than booking online.
+                    {result.explanation} {t("ai.emergencyCare")}
                   </span>
                 </Alert>
               ) : (
                 <>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-ink-900">
-                      Suggested: {result.departmentName}
+                      {t("ai.suggested")}: {result.departmentName}
                     </p>
                     <Badge className={urgencyStyles[result.urgencyLevel]}>
-                      {result.urgencyLevel} urgency
+                      {result.urgencyLevel} {t("ai.urgency")}
                     </Badge>
                   </div>
                   <p className="text-sm text-ink-700">{result.explanation}</p>
@@ -115,7 +117,10 @@ export function SymptomChecker({
                     variant="secondary"
                     onClick={() => onDepartmentSuggested(result.departmentName)}
                   >
-                    View {result.departmentName} doctors
+                    {t("ai.viewDoctors").replace(
+                      "{department}",
+                      result.departmentName
+                    )}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </>

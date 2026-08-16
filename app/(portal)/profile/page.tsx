@@ -27,6 +27,7 @@ import {
   apiErrorMessage,
 } from "@/lib/api";
 import { formatDate, initials } from "@/lib/format";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const bloodGroups = [
   "A_POSITIVE", "A_NEGATIVE",
@@ -70,6 +71,8 @@ export default function ProfilePage() {
 
   const today = new Date().toISOString().split("T")[0];
 
+  const { t } = useTranslation();
+
   // ── Load profile ─────────────────────────────────────────
   useEffect(() => {
     async function load() {
@@ -108,12 +111,12 @@ export default function ProfilePage() {
       const updated = await updateMyPatientProfile(form);
       setProfile(updated);
       setEditing(false);
-      showToast("Profile updated successfully.", "success");
+      showToast(t("profile.updatedSuccessfully"), "success");
     } catch (err) {
       setError(
         apiErrorMessage(
           err,
-          "Couldn't update profile. Please try again."
+          t("profile.updateError")
         )
       );
     } finally {
@@ -142,8 +145,8 @@ export default function ProfilePage() {
     return (
       <>
         <Topbar
-          title="My profile"
-          subtitle="Your personal and medical details"
+          title={t("profile.title")}
+          subtitle={t("profile.subtitle")}
         />
         <div className="space-y-6 px-6 pb-10 lg:px-10">
           <Skeleton className="h-24 w-full rounded-2xl" />
@@ -176,7 +179,7 @@ export default function ProfilePage() {
                              text-ink-900">
                 {user?.name}
               </h2>
-              <p className="text-sm text-ink-500">Patient</p>
+              <p className="text-sm text-ink-500">{t("profile.patient")}</p>
             </div>
           </div>
 
@@ -188,7 +191,7 @@ export default function ProfilePage() {
               onClick={() => setEditing(true)}
             >
               <Pencil className="h-3.5 w-3.5" />
-              Edit profile
+              {t("profile.editProfile")}
             </Button>
           ) : (
             <Button
@@ -197,7 +200,7 @@ export default function ProfilePage() {
               onClick={handleCancelEdit}
             >
               <X className="h-3.5 w-3.5" />
-              Cancel
+              {t("profile.cancel")}
             </Button>
           )}
         </Card>
@@ -208,43 +211,43 @@ export default function ProfilePage() {
             <Card>
               <h3 className="mb-4 font-display text-base
                              font-semibold text-ink-900">
-                Personal details
+                {t("profile.personalDetails")}
               </h3>
               <div className="grid grid-cols-1 gap-4
                               sm:grid-cols-2">
                 {[
                   {
                     icon: Mail,
-                    label: "Email",
+                    label: t("profile.email"),
                     value: profile.email || user?.email,
                   },
                   {
                     icon: Phone,
-                    label: "Phone",
+                    label: t("profile.phone"),
                     value: profile.phone || user?.phone,
                   },
                   {
                     icon: Cake,
-                    label: "Date of birth",
+                    label: t("profile.dateOfBirth"),
                     value: profile.dateOfBirth
                       ? formatDate(profile.dateOfBirth)
                       : "—",
                   },
                   {
                     icon: Droplet,
-                    label: "Blood group",
+                    label: t("profile.bloodGroup"),
                     value:
                       profile.bloodGroup?.replace("_", " ") ||
                       "—",
                   },
                   {
                     icon: MapPin,
-                    label: "Address",
+                    label: t("profile.address"),
                     value: profile.address || "—",
                   },
                   {
                     icon: ShieldAlert,
-                    label: "Emergency contact",
+                    label: t("profile.emergencyContact"),
                     value:
                       profile.emergencyContactName &&
                       profile.emergencyContact
@@ -280,7 +283,7 @@ export default function ProfilePage() {
               <Card>
                 <h3 className="mb-2 font-display text-base
                                font-semibold text-ink-900">
-                  Medical history
+                  {t("profile.medicalHistory")}
                 </h3>
                 <p className="text-sm text-ink-700">
                   {profile.medicalHistory}
@@ -295,14 +298,14 @@ export default function ProfilePage() {
           <Card>
             <h3 className="mb-4 font-display text-base
                            font-semibold text-ink-900">
-              Edit profile
+              {t("profile.editProfileTitle")}
             </h3>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-1 gap-4
                               sm:grid-cols-2">
                 <Input
                   type="date"
-                  label="Date of birth"
+                  label={t("profile.dateOfBirth")}
                   max={today}
                   value={form.dateOfBirth}
                   onChange={(e) =>
@@ -310,13 +313,13 @@ export default function ProfilePage() {
                   }
                 />
                 <Select
-                  label="Blood group"
+                  label={t("profile.bloodGroup")}
                   value={form.bloodGroup}
                   onChange={(e) =>
                     update("bloodGroup", e.target.value)
                   }
                 >
-                  <option value="">Select blood group</option>
+                  <option value="">{t("profile.selectBloodGroup")}</option>
                   {bloodGroups.map((bg) => (
                     <option key={bg} value={bg}>
                       {bg.replace("_", " ")}
@@ -326,7 +329,7 @@ export default function ProfilePage() {
               </div>
 
               <Input
-                label="Address"
+                label={t("profile.address")}
                 value={form.address}
                 onChange={(e) => update("address", e.target.value)}
               />
@@ -334,7 +337,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 gap-4
                               sm:grid-cols-2">
                 <Input
-                  label="Emergency contact name"
+                  label={t("profile.emergencyContactName")}
                   value={form.emergencyContactName}
                   onChange={(e) =>
                     update("emergencyContactName", e.target.value)
@@ -342,7 +345,7 @@ export default function ProfilePage() {
                 />
                 <Input
                   type="tel"
-                  label="Emergency contact number"
+                  label={t("profile.emergencyContactNumber")}
                   value={form.emergencyContact}
                   onChange={(e) =>
                     update("emergencyContact", e.target.value)
@@ -353,8 +356,8 @@ export default function ProfilePage() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium
                                   text-ink-700">
-                  Medical history{" "}
-                  <span className="text-ink-400">(optional)</span>
+                  {t("profile.medicalHistory")}{" "}
+                  <span className="text-ink-400">({t("profile.optional")})</span>
                 </label>
                 <textarea
                   value={form.medicalHistory}
@@ -379,7 +382,7 @@ export default function ProfilePage() {
                   className="flex-1"
                   onClick={handleCancelEdit}
                 >
-                  Cancel
+                  {t("profile.cancel")}
                 </Button>
                 <Button
                   type="submit"
@@ -387,7 +390,7 @@ export default function ProfilePage() {
                   loading={saving}
                 >
                   <Save className="h-4 w-4" />
-                  Save changes
+                  {t("profile.saveChanges")}
                 </Button>
               </div>
             </form>
