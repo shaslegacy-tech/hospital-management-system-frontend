@@ -13,6 +13,9 @@ export function DoctorCard({
   doctor: DoctorResponse;
   onBook: (d: DoctorResponse) => void;
 }) {
+
+  // console.log(" 🚀 ~ file: DoctorCard.tsx:22 ~ DoctorCard ~ doctor", doctor);
+  
   return (
     <Card className="flex flex-col gap-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_36px_-14px_rgba(15,118,110,0.28)]">
       <div className="flex items-start gap-3">
@@ -26,6 +29,7 @@ export function DoctorCard({
           <p className="truncate text-xs text-ink-500">
             {doctor.specialization}
           </p>
+          {doctor.gender && <span className="text-xs text-ink-500">{doctor.gender === "FEMALE" ? "Dr. (F)" : "Dr. (M)"}</span>}
           <StarRating
             value={doctor.averageRating}
             showValue

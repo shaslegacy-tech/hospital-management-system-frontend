@@ -7,44 +7,55 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { AuthResponse, PatientResponse, DoctorResponse } from "./types";
-import { getPatientByUserId, getDoctorByUserId } from "./api";
+import type { AuthResponse, CaregiverLink, DoctorResponse, PatientResponse } from "./types";
+import {
+  getDoctorByUserId,
+  getPatientByUserId,
+  getMyManagedPatients,
+} from "./api";
 
 interface AuthContextValue {
   user: AuthResponse | null;
-  // --- Patient ---
-  patient: PatientResponse | null;
+  patient: PatientResponse | null; // the logged-in user's OWN patient profile
   patientLoading: boolean;
   patientMissing: boolean;
-  refreshPatient: () => Promise<void>;
-  // --- Doctor ---
   doctor: DoctorResponse | null;
   doctorLoading: boolean;
   doctorMissing: boolean;
-  refreshDoctor: () => Promise<void>;
-  // --- Shared ---
   hydrated: boolean;
   setSession: (auth: AuthResponse) => void;
   logout: () => void;
+  refreshPatient: () => Promise<void>;
+  refreshDoctor: () => Promise<void>;
+
+  // Caregiver / "acting as" support
+  managedPatients: CaregiverLink[];
+  activePatientId: number | null; // id of whichever patient is currently "active"
+  activePatientName: string | null;
+  isActingAsCaregiver: boolean;
+  switchToOwnProfile: () => void;
+  switchToManagedPatient: (link: CaregiverLink) => void;
+  refreshManagedPatients: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const ACTIVE_PATIENT_KEY = "hms_active_patient";
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthResponse | null>(null);
-  const [hydrated, setHydrated] = useState(false);
-
-  // Patient state
   const [patient, setPatient] = useState<PatientResponse | null>(null);
   const [patientLoading, setPatientLoading] = useState(false);
   const [patientMissing, setPatientMissing] = useState(false);
-
-  // Doctor state
   const [doctor, setDoctor] = useState<DoctorResponse | null>(null);
   const [doctorLoading, setDoctorLoading] = useState(false);
   const [doctorMissing, setDoctorMissing] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from localStorage
+  const [managedPatients, setManagedPatients] = useState<CaregiverLink[]>([]);
+  const [activePatientId, setActivePatientId] = useState<number | null>(null);
+  const [activePatientName, setActivePatientName] = useState<string | null>(null);
+
   useEffect(() => {
     const raw = localStorage.getItem("hms_user");
     if (raw) {
@@ -57,7 +68,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []);
 
-  // ── Patient ──────────────────────────────────────────
   const refreshPatient = useCallback(async () => {
     if (!user || user.role !== "PATIENT") return;
     setPatientLoading(true);
@@ -65,6 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const data = await getPatientByUserId(user.userId);
       setPatient(data);
+      // Default active patient = yourself, unless a switch was already made
+      setActivePatientId((prev) => prev ?? data.id);
     } catch {
       setPatient(null);
       setPatientMissing(true);
@@ -73,40 +85,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user?.role === "PATIENT") refreshPatient();
-  }, [user, refreshPatient]);
+  const refreshDoctor = useCallback(async () => {
+    if (!user || user.role !== "DOCTOR") return;
+    setDoctorLoading(true);
+    setDoctorMissing(false);
+    try {
+      const data = await getDoctorByUserId(user.userId);
+      setDoctor(data);
+    } catch {
+      setDoctor(null);
+      setDoctorMissing(true);
+    } finally {
+      setDoctorLoading(false);
+    }
+  }, [user]);
 
-  // ── Doctor ───────────────────────────────────────────
-  // auth-context.tsx
-const refreshDoctor = useCallback(async () => {
-  console.log("refreshDoctor called", { user }); // ← add this
-
-  if (!user || user.role !== "DOCTOR") {
-    console.warn("refreshDoctor skipped — role:", user?.role); // ← add this
-    return;
-  }
-
-  setDoctorLoading(true);
-  setDoctorMissing(false);
-  try {
-    const data = await getDoctorByUserId(user.userId);
-    console.log("doctor fetched ✅", data); // ← add this
-    setDoctor(data);
-  } catch (err) {
-    console.error("doctor fetch failed ❌", err); // ← add this
-    setDoctor(null);
-    setDoctorMissing(true);
-  } finally {
-    setDoctorLoading(false);
-  }
-}, [user]);
+  const refreshManagedPatients = useCallback(async () => {
+    if (!user || user.role !== "PATIENT") return;
+    try {
+      const data = await getMyManagedPatients();
+      setManagedPatients(data);
+    } catch {
+      setManagedPatients([]);
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (user?.role === "DOCTOR") refreshDoctor();
-  }, [user, refreshDoctor]);
+    if (!user) return;
+    if (user.role === "PATIENT") {
+      refreshPatient();
+      refreshManagedPatients();
+    }
+    if (user.role === "DOCTOR") refreshDoctor();
+  }, [user, refreshPatient, refreshDoctor, refreshManagedPatients]);
 
-  // ── Session ──────────────────────────────────────────
+  // Restore a previously-active managed-patient context (e.g. after reload)
+  useEffect(() => {
+    if (!patient) return;
+    const saved = localStorage.getItem(ACTIVE_PATIENT_KEY);
+    if (saved) {
+      try {
+        const { id, name } = JSON.parse(saved);
+        if (id !== patient.id) {
+          setActivePatientId(id);
+          setActivePatientName(name);
+          return;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    setActivePatientId(patient.id);
+    setActivePatientName(patient.patientName);
+  }, [patient]);
+
+  const switchToOwnProfile = useCallback(() => {
+    if (!patient) return;
+    setActivePatientId(patient.id);
+    setActivePatientName(patient.patientName);
+    localStorage.removeItem(ACTIVE_PATIENT_KEY);
+  }, [patient]);
+
+  const switchToManagedPatient = useCallback((link: CaregiverLink) => {
+    setActivePatientId(link.patientId);
+    setActivePatientName(link.patientName);
+    localStorage.setItem(
+      ACTIVE_PATIENT_KEY,
+      JSON.stringify({ id: link.patientId, name: link.patientName })
+    );
+  }, []);
+
   const setSession = (auth: AuthResponse) => {
     localStorage.setItem("hms_token", auth.token);
     localStorage.setItem("hms_user", JSON.stringify(auth));
@@ -116,9 +164,13 @@ const refreshDoctor = useCallback(async () => {
   const logout = () => {
     localStorage.removeItem("hms_token");
     localStorage.removeItem("hms_user");
+    localStorage.removeItem(ACTIVE_PATIENT_KEY);
     setUser(null);
     setPatient(null);
     setDoctor(null);
+    setManagedPatients([]);
+    setActivePatientId(null);
+    setActivePatientName(null);
     window.location.href = "/login";
   };
 
@@ -129,14 +181,21 @@ const refreshDoctor = useCallback(async () => {
         patient,
         patientLoading,
         patientMissing,
-        refreshPatient,
         doctor,
         doctorLoading,
         doctorMissing,
-        refreshDoctor,
         hydrated,
         setSession,
         logout,
+        refreshPatient,
+        refreshDoctor,
+        managedPatients,
+        activePatientId,
+        activePatientName,
+        isActingAsCaregiver: !!patient && activePatientId !== patient.id,
+        switchToOwnProfile,
+        switchToManagedPatient,
+        refreshManagedPatients,
       }}
     >
       {children}

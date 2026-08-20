@@ -11,6 +11,9 @@ import {
   Award,
   Phone,
   Mail,
+  Venus, 
+  Mars, 
+  CircleUserRound
 } from "lucide-react";
 import { Topbar } from "@/components/Topbar";
 import { Card } from "@/components/ui/Card";
@@ -164,12 +167,30 @@ export default function DoctorsManagePage() {
                       {initials(d.doctorName)}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm
-                                    font-semibold text-ink-900">
-                        {getDisplayName(d.doctorName, "DOCTOR")}
-                      </p>
-                      <p className="truncate text-xs
-                                    text-ink-500">
+                      <div className="flex items-center gap-1.5">
+                        <p className="truncate text-sm font-semibold text-ink-900">
+                          {getDisplayName(d.doctorName, "DOCTOR")}
+                        </p>
+
+                        {d.gender === "FEMALE" ? (
+                          <Venus
+                            className="h-3.5 w-3.5 flex-shrink-0 text-pink-500"
+                            aria-label="Female doctor"
+                          />
+                        ) : d.gender === "MALE" ? (
+                          <Mars
+                            className="h-3.5 w-3.5 flex-shrink-0 text-blue-500"
+                            aria-label="Male doctor"
+                          />
+                        ) : (
+                          <CircleUserRound
+                            className="h-3.5 w-3.5 flex-shrink-0 text-ink-400"
+                            aria-label="Gender not specified"
+                          />
+                        )}
+                      </div>
+
+                      <p className="truncate text-xs text-ink-500">
                         {d.specialization}
                       </p>
                     </div>

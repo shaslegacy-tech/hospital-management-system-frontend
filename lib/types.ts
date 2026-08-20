@@ -43,6 +43,7 @@ export interface DoctorResponse {
   slotDurationMinutes: number;
   averageRating: number | null;
   reviewCount: number;
+  gender: string | null;
   createdAt: string;
 }
 
@@ -185,6 +186,7 @@ export interface DoctorRequest {
   workStartTime?: string;
   workEndTime?: string;
   slotDurationMinutes?: number;
+  gender?: string;
 }
 
 export interface DoctorOnboardRequest {
@@ -196,6 +198,7 @@ export interface DoctorOnboardRequest {
   specialization: string;
   experienceYears: number;
   consultationFee: number;
+  gender?: string;
   bio?: string;
   workStartTime?: string;
   workEndTime?: string;
@@ -280,4 +283,13 @@ export interface AuditLogItem {
   entityId: number;
   details: string;
   createdAt: string;
+}
+
+export interface CaregiverLink {
+  id: number;
+  patientId: number;
+  patientName: string;
+  caregiverName: string;
+  caregiverEmail: string;
+  relationship: string;
 }

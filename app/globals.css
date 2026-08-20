@@ -52,6 +52,37 @@ html[lang="hi"] body {
   font-family: var(--font-devanagari), var(--font-body), sans-serif;
 }
 
+html.large-text {
+  font-size: 118%;
+}
+
+html.large-text button,
+html.large-text a {
+  min-height: 44px;
+}
+
+html.high-contrast {
+  --tw-text-opacity: 1;
+}
+ 
+html.high-contrast body {
+  color: #000000;
+}
+ 
+html.high-contrast .text-ink-500 {
+  color: #334155 !important;
+}
+ 
+html.high-contrast .border-ink-100,
+html.high-contrast .border-ink-100\/80 {
+  border-color: #94a3b8 !important;
+}
+ 
+html.high-contrast .shadow-card,
+html.high-contrast .shadow-soft {
+  box-shadow: 0 0 0 1.5px #64748b;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

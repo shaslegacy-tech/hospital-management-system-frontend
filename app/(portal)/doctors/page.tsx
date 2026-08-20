@@ -34,6 +34,8 @@ export default function DoctorsPage() {
     null
   );
 
+   const [gender, setGender] = useState("");
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function DoctorsPage() {
         departmentId: (overrideDepartmentId ?? departmentId)
           ? Number(overrideDepartmentId ?? departmentId)
           : undefined,
+        gender: gender || undefined,
         available: availableOnly ? true : undefined,
         page,
         size: PAGE_SIZE,
@@ -117,6 +120,11 @@ export default function DoctorsPage() {
                 {d.name}
               </option>
             ))}
+          </Select>
+          <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+              <option value="">Any Gender</option>
+              <option value="FEMALE">Female doctors</option>
+              <option value="MALE">Male doctors</option>
           </Select>
           <label className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 text-sm text-ink-700">
             <input
