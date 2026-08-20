@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 import { checkSymptoms, apiErrorMessage } from "@/lib/api";
 import { SymptomCheckResult } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { VoiceInputButton } from "@/components/VoiceInputButton";
 
 const urgencyStyles: Record<SymptomCheckResult["urgencyLevel"], string> = {
   LOW: "bg-brand-100 text-brand-800",
@@ -76,6 +77,7 @@ export function SymptomChecker({
       {expanded && (
         <div className="mt-4 space-y-4">
           <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="flex items-start gap-2">
             <textarea
               value={symptoms}
               onChange={(e) => setSymptoms(e.target.value)}
@@ -84,6 +86,10 @@ export function SymptomChecker({
               placeholder={t("ai.symptomPlaceholder")}
               className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-500/70 focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
+            <VoiceInputButton
+                onResult={(text) => setSymptoms((prev) => (prev ? prev + " " + text : text))}
+              />
+            </div>
             <Button type="submit" size="sm" loading={loading} disabled={!symptoms.trim()}>
               <Sparkles className="h-3.5 w-3.5" />
               {t("ai.getSuggestion")}

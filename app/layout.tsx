@@ -6,6 +6,7 @@ import { ToastProvider } from "@/lib/toast-context";
 import { Analytics } from "@vercel/analytics/next"
 import { Noto_Sans_Devanagari } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+ import { AccessibilityProvider } from "@/lib/accessibility/AccessibilityContext";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -45,9 +46,11 @@ export default function RootLayout({
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable} ${devanagari.variable}`}>
       <body>
          <LanguageProvider>
-          <AuthProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </AuthProvider>
+          <AccessibilityProvider>
+            <AuthProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </AuthProvider>
+          </AccessibilityProvider>
         </LanguageProvider>
         <Analytics />
       </body>

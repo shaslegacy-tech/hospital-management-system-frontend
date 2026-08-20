@@ -6,6 +6,7 @@ import type {
   AuthResponse,
   BillRequest,
   BillResponse,
+  CaregiverLink,
   ClinicalNotesDraft,
   DashboardResponse,
   DepartmentRequest,
@@ -117,6 +118,7 @@ export async function searchDoctors(params: {
   minExperience?: number;
   available?: boolean;
   maxFee?: number;
+  gender?: string;
   page?: number;
   size?: number;
 }) {
@@ -790,4 +792,28 @@ export async function getAuditLogs(params: {
     params,
   });
   return data;
+}
+
+export async function addCaregiver(payload: {
+  caregiverEmail: string;
+  relationship: string;
+}) {
+  const { data } = await api.post<CaregiverLink>("/caregivers", payload);
+  return data;
+}
+ 
+export async function getMyCaregivers() {
+  const { data } = await api.get<CaregiverLink[]>("/caregivers/my-caregivers");
+  return data;
+}
+ 
+export async function getMyManagedPatients() {
+  const { data } = await api.get<CaregiverLink[]>(
+    "/caregivers/my-managed-patients"
+  );
+  return data;
+}
+ 
+export async function removeCaregiverLink(id: number) {
+  await api.delete(`/caregivers/${id}`);
 }

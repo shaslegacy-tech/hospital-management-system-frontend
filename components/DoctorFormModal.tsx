@@ -34,7 +34,7 @@ export function DoctorFormModal({
   const [experienceYears, setExperienceYears] = useState("");
   const [consultationFee, setConsultationFee] = useState("");
   const [bio, setBio] = useState("");
-
+  const [gender, setGender] = useState("");
   // Working hours — drives slot-based scheduling
   const [workStartTime, setWorkStartTime] = useState("09:00");
   const [workEndTime, setWorkEndTime] = useState("17:00");
@@ -54,6 +54,7 @@ export function DoctorFormModal({
           ? String(departments.find((d) => d.name === doctor?.departmentName)!.id)
           : ""
       );
+      setGender(doctor?.gender || "");
       setSpecialization(doctor?.specialization || "");
       setExperienceYears(doctor ? String(doctor.experienceYears) : "");
       setConsultationFee(doctor ? String(doctor.consultationFee) : "");
@@ -84,6 +85,7 @@ export function DoctorFormModal({
           specialization,
           experienceYears: Number(experienceYears),
           consultationFee: Number(consultationFee),
+          gender,
           bio,
           ...scheduleFields,
         });
@@ -97,6 +99,7 @@ export function DoctorFormModal({
           specialization,
           experienceYears: Number(experienceYears),
           consultationFee: Number(consultationFee),
+          gender,
           bio,
           ...scheduleFields,
         });
@@ -115,7 +118,7 @@ export function DoctorFormModal({
         {!doctor && (
           <>
             <div className="rounded-xl bg-brand-50 px-3.5 py-2.5 text-xs text-brand-800">
-              This creates the doctor's login account and profile together.
+              This creates the doctor&apos;s login account and profile together.
               Share the email + password with them so they can sign in.
             </div>
             <Input
@@ -168,6 +171,12 @@ export function DoctorFormModal({
               {d.name}
             </option>
           ))}
+        </Select>
+        <Select label="Gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+          <option value="">Not specified</option>
+          <option value="FEMALE">Female</option>
+          <option value="MALE">Male</option>
+          <option value="OTHER">Other</option>
         </Select>
         <Input
           label="Specialization"

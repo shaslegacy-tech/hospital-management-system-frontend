@@ -8,6 +8,7 @@ import { initials } from "@/lib/format";
 import { ChangePasswordModal } from "@/components/ChangePasswordModal";
 import { NotificationBell } from "@/components/NotificationBell";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 
 export function Topbar({
   title,
@@ -35,6 +36,7 @@ export function Topbar({
       </div>
 
       <div className="flex items-center gap-3">
+        <AccessibilityMenu />
         <LanguageSwitcher />
         <NotificationBell />
         <div className="relative">
