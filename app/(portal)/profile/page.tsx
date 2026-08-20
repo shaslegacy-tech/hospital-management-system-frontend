@@ -28,6 +28,7 @@ import {
 } from "@/lib/api";
 import { formatDate, initials } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { CaregiversSection } from "@/components/CaregiversSection";
 
 const bloodGroups = [
   "A_POSITIVE", "A_NEGATIVE",
@@ -278,7 +279,7 @@ export default function ProfilePage() {
                 ))}
               </div>
             </Card>
-
+              <CaregiversSection />
             {profile.medicalHistory && (
               <Card>
                 <h3 className="mb-2 font-display text-base

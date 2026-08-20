@@ -16,7 +16,7 @@ import { VisitSummaryCard } from "@/components/VisitSummaryCard";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function RecordsPage() {
-  const { patient } = useAuth();
+  const { patient, activePatientId } = useAuth();
   const [records, setRecords] = useState<MedicalRecordResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<number | null>(null);
@@ -24,8 +24,8 @@ export default function RecordsPage() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!patient) return;
-    getPatientHistory(patient.id)
+    if (!patient || !activePatientId) return;
+    getPatientHistory(activePatientId)
       .then((data) =>
         setRecords(
           [...data].sort(
@@ -149,7 +149,7 @@ export default function RecordsPage() {
         )}
 
         {patient && (
-          <PatientFilesSection patientId={patient.id} canUpload canDelete />
+          <PatientFilesSection patientId={activePatientId ?? patient.id} canUpload canDelete />
         )}
       </div>
     </>

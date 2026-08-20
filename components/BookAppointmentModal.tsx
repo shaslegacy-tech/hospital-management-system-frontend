@@ -21,7 +21,7 @@ export function BookAppointmentModal({
   onClose: () => void;
   onBooked: () => void;
 }) {
-  const { patient } = useAuth();
+  const { patient, activePatientId, isActingAsCaregiver, activePatientName } = useAuth();
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [reason, setReason] = useState("");
@@ -37,7 +37,7 @@ export function BookAppointmentModal({
     setLoading(true);
     try {
       await bookAppointment({
-        patientId: patient.id,
+        patientId: activePatientId ?? patient.id,
         doctorId: doctor.id,
         appointmentDate: date,
         appointmentTime: time,
@@ -115,6 +115,12 @@ export function BookAppointmentModal({
                 className="w-full rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-500/70 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
+
+            {isActingAsCaregiver && (
+              <Alert tone="info">
+                Booking for {activePatientName}
+              </Alert>
+            )}
 
             {error && <Alert tone="error">{error}</Alert>}
 

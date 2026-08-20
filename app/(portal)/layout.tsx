@@ -12,7 +12,7 @@ export default function PortalLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, hydrated, patientLoading, patientMissing, logout } = useAuth();
+  const { user, hydrated, patientLoading, patientMissing,isActingAsCaregiver, activePatientName, switchToOwnProfile, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,6 +41,19 @@ export default function PortalLayout({
           <ProfilePending onLogout={logout} />
         ) : (
           <div key={pathname} className="animate-[fadeIn_.25s_ease-out]">
+           {isActingAsCaregiver && (
+            <div className="flex items-center justify-between bg-amber-500 px-6 py-2 text-sm font-medium text-white lg:px-10">
+              <span>
+                You are viewing {activePatientName}&apos;s account as their caregiver.
+              </span>
+              <button
+                onClick={switchToOwnProfile}
+                className="rounded-lg bg-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/30"
+              >
+                Back to my profile
+              </button>
+            </div>
+          )}
             {children}
           </div>
         )}
