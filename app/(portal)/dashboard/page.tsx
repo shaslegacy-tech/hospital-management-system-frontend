@@ -30,7 +30,7 @@ import { AppointmentResponse, BillResponse } from "@/lib/types";
 import { formatCurrency, formatDate } from "@/lib/format";
 
 export default function DashboardPage() {
-  const { user, patient } = useAuth();
+  const { user, patient, activePatientId } = useAuth();
   const { showToast } = useToast();
   const { t } = useTranslation();
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
@@ -40,11 +40,11 @@ export default function DashboardPage() {
   const [cancelling, setCancelling] = useState(false);
 
   async function load() {
-    if (!patient) return;
+    if (!patient || !activePatientId) return;
     setLoading(true);
     const [apptPage, billList] = await Promise.all([
-      getPatientAppointments(patient.id),
-      getPatientBills(patient.id),
+      getPatientAppointments(activePatientId ?? patient.id),
+      getPatientBills(activePatientId ?? patient.id),
     ]);
     setAppointments(apptPage.content);
     setBills(billList);
@@ -54,7 +54,7 @@ export default function DashboardPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patient]);
+  }, [patient, activePatientId]);
 
   const upcoming = appointments
     .filter((a) => a.status === "PENDING" || a.status === "CONFIRMED")

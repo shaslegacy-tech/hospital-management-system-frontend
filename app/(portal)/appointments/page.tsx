@@ -20,7 +20,7 @@ import { RateVisitModal } from "@/components/RateVisitModal";
 type Tab = "upcoming" | "past" | "cancelled";
 
 export default function AppointmentsPage() {
-  const { patient } = useAuth();
+  const { patient, activePatientId } = useAuth();
   const { showToast } = useToast();
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,9 +34,9 @@ export default function AppointmentsPage() {
   const { t } = useTranslation();
 
   async function load() {
-    if (!patient) return;
+    if (!patient || !activePatientId) return;
     setLoading(true);
-    const data = await getPatientAppointments(patient.id, 0, 100);
+    const data = await getPatientAppointments(activePatientId ?? patient.id, 0, 100);
     setAppointments(data.content);
 
     const completed = data.content.filter((a) => a.status === "COMPLETED");

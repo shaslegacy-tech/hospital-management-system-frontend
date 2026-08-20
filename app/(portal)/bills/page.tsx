@@ -15,15 +15,15 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function BillsPage() {
-  const { patient } = useAuth();
+  const { patient, activePatientId, isActingAsCaregiver } = useAuth();
   const [bills, setBills] = useState<BillResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { t } = useTranslation();
 
   async function load() {
-    if (!patient) return;
-    const data = await getPatientBills(patient.id);
+    if (!patient || !activePatientId) return;
+    const data = await getPatientBills(activePatientId);
     setBills(
       [...data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -116,15 +116,21 @@ export default function BillsPage() {
                   <span className="flex justify-start sm:justify-end">
                     <Badge status={b.status}>{b.status}</Badge>
                   </span>
-                  <span className="flex justify-end">
-                    {b.status === "PENDING" ? (
+                 <span className="flex justify-end">
+                  {b.status === "PENDING" ? (
+                    !isActingAsCaregiver ? (
                       <PayNowButton bill={b} onPaid={load} />
                     ) : (
                       <span className="text-xs text-ink-500">
-                        {b.paymentMethod || "—"}
+                        Payment by patient only
                       </span>
-                    )}
-                  </span>
+                    )
+                  ) : (
+                    <span className="text-xs text-ink-500">
+                      {b.paymentMethod || "—"}
+                    </span>
+                  )}
+                </span>
                 </div>
               ))}
             </div>
