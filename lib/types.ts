@@ -1,4 +1,4 @@
-export type Role = "ADMIN" | "DOCTOR" | "PATIENT" | "RECEPTIONIST";
+export type Role = "ADMIN" | "DOCTOR" | "PATIENT" | "RECEPTIONIST" | "SUPER_ADMIN";
 
 export type AppointmentStatus =
   | "PENDING"
@@ -15,6 +15,7 @@ export interface AuthResponse {
   email: string;
   phone: string;
   role: Role;
+  hospitalStatus: string | null;
 }
 
 export interface DepartmentResponse {
@@ -293,3 +294,34 @@ export interface CaregiverLink {
   caregiverEmail: string;
   relationship: string;
 }
+
+export interface HospitalResponse {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  latitude: number | null;
+  longitude: number | null;
+  contactPhone: string;
+  contactEmail: string;
+  description: string;
+  logoUrl: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+}
+ 
+export interface HospitalRegisterRequest {
+  hospitalName: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  description?: string;
+  contactPhone: string;
+  adminName: string;
+  adminEmail: string;
+  adminPassword: string;
+  adminPhone: string;
+}
+ 

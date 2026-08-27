@@ -48,6 +48,11 @@ export default function LoginPage() {
         router.replace("/reception/dashboard");
         return;
       }
+      if (auth.role === "SUPER_ADMIN") {
+        setSession(auth);
+        router.replace("/super-admin/dashboard");
+        return;
+      }
       setError(
         "This portal doesn't have a screen for your role yet. Please check back soon."
       );
