@@ -14,6 +14,8 @@ import type {
   DoctorOnboardRequest,
   DoctorRequest,
   DoctorResponse,
+  HospitalRegisterRequest,
+  HospitalResponse,
   MedicalRecordRequest,
   MedicalRecordResponse,
   NotificationItem,
@@ -816,4 +818,47 @@ export async function getMyManagedPatients() {
  
 export async function removeCaregiverLink(id: number) {
   await api.delete(`/caregivers/${id}`);
+}
+
+export async function registerHospital(payload: HospitalRegisterRequest) {
+  const { data } = await api.post<HospitalResponse>(
+    "/hospitals/register",
+    payload
+  );
+  return data;
+}
+ 
+export async function getApprovedHospitals() {
+  const { data } = await api.get<HospitalResponse[]>("/hospitals");
+  return data;
+}
+ 
+export async function getHospital(id: number) {
+  const { data } = await api.get<HospitalResponse>(`/hospitals/${id}`);
+  return data;
+}
+ 
+export async function getPendingHospitals() {
+  const { data } = await api.get<HospitalResponse[]>("/hospitals/pending");
+  return data;
+}
+ 
+export async function getAllHospitals() {
+  const { data } = await api.get<HospitalResponse[]>("/hospitals/all");
+  return data;
+}
+ 
+export async function approveHospital(id: number) {
+  const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/approve`);
+  return data;
+}
+ 
+export async function rejectHospital(id: number) {
+  const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/reject`);
+  return data;
+}
+ 
+export async function suspendHospital(id: number) {
+  const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/suspend`);
+  return data;
 }
