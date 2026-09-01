@@ -325,3 +325,27 @@ export interface HospitalRegisterRequest {
   adminPhone: string;
 }
  
+export interface NearbyHospital {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  description: string;
+  logoUrl: string | null;
+  distanceKm: number;
+}
+ 
+export interface NearbyDoctor {
+  id: number;
+  doctorName: string;
+  specialization: string;
+  departmentName: string;
+  consultationFee: number;
+  averageRating: number | null;
+  reviewCount: number;
+  hospitalId: number;
+  hospitalName: string;
+  hospitalCity: string;
+  distanceKm: number;
+}

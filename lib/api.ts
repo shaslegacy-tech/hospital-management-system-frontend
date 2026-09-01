@@ -18,6 +18,8 @@ import type {
   HospitalResponse,
   MedicalRecordRequest,
   MedicalRecordResponse,
+  NearbyDoctor,
+  NearbyHospital,
   NotificationItem,
   Page,
   PatientFileResponse,
@@ -860,5 +862,36 @@ export async function rejectHospital(id: number) {
  
 export async function suspendHospital(id: number) {
   const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/suspend`);
+  return data;
+}
+
+export async function getNearbyHospitals(params: {
+  lat: number;
+  lng: number;
+  radiusKm?: number;
+}) {
+  const { data } = await api.get<NearbyHospital[]>("/public/hospitals/nearby", {
+    params,
+  });
+  return data;
+}
+ 
+export async function getNearbyDoctors(params: {
+  lat: number;
+  lng: number;
+  radiusKm?: number;
+  specialization?: string;
+}) {
+  const { data } = await api.get<NearbyDoctor[]>("/public/doctors/nearby", {
+    params,
+  });
+  return data;
+}
+ 
+export async function geocodeLocation(query: string) {
+  const { data } = await api.get<{ lat: number; lng: number }>(
+    "/public/geocode",
+    { params: { query } }
+  );
   return data;
 }
