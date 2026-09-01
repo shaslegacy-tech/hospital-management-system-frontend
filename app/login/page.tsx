@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { HeartPulse, LogIn } from "lucide-react";
+import { HeartPulse, LogIn, MapPin } from "lucide-react";
 import { AuthShell } from "@/components/AuthShell";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -86,6 +86,14 @@ export default function LoginPage() {
       <p className="mt-1.5 text-sm text-ink-500">
         {t("auth.signInSubtitle")}
       </p>
+
+      <Link
+        href="/browse"
+        className="mb-4 flex items-center justify-center gap-1.5 text-sm font-medium text-brand-700 hover:text-brand-800"
+      >
+        <MapPin className="h-4 w-4" />
+        Browse hospitals near you
+      </Link>
 
       <form onSubmit={handleSubmit} className="mt-7 space-y-4">
         <Input
