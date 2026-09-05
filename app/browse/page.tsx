@@ -10,6 +10,7 @@ import {
   Stethoscope,
   Navigation,
   Star,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -196,6 +197,12 @@ export default function BrowsePage() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-ink-900">{h.name}</p>
+                        {h.verified && (
+                            <span className="flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">
+                              <ShieldCheck className="h-3 w-3" />
+                              Verified
+                            </span>
+                          )}
                         <p className="mt-0.5 text-xs text-ink-500">
                           {h.address}, {h.city}, {h.state}
                         </p>

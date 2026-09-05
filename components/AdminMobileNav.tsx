@@ -9,6 +9,7 @@ import {
   Users,
   Receipt,
   CalendarDays,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -19,6 +20,7 @@ const nav = [
   { href: "/admin/departments", label: "Depts", icon: Building2 },
   { href: "/admin/patients", label: "Patients", icon: Users },
   { href: "/admin/bills", label: "Bills", icon: Receipt },
+  { href: "/admin/subscription",      label: "Subscription",      icon: CreditCard },
 ];
 
 export function AdminMobileNav() {

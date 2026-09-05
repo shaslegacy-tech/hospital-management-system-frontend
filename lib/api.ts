@@ -26,9 +26,12 @@ import type {
   PatientRequest,
   PatientResponse,
   PaymentOrder,
+  PlatformStats,
   PrescriptionRequest,
   ReviewItem,
   Role,
+  Subscription,
+  SubscriptionPaymentOrder,
   SymptomCheckResult,
   UserSummary,
 } from "./types";
@@ -893,5 +896,49 @@ export async function geocodeLocation(query: string) {
     "/public/geocode",
     { params: { query } }
   );
+  return data;
+}
+
+export async function getPlatformStats() {
+  const { data } = await api.get<PlatformStats>("/hospitals/platform-stats");
+  return data;
+}
+
+export async function getMySubscription() {
+  const { data } = await api.get<Subscription>("/subscriptions/my-hospital");
+  return data;
+}
+ 
+export async function createSubscriptionOrder(plan: "BASIC" | "PREMIUM") {
+  const { data } = await api.post<SubscriptionPaymentOrder>(
+    "/subscriptions/create-order",
+    null,
+    { params: { plan } }
+  );
+  return data;
+}
+ 
+export async function verifySubscriptionPayment(payload: {
+  plan: "BASIC" | "PREMIUM";
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature: string;
+}) {
+  const { data } = await api.post<Subscription>("/subscriptions/verify", payload);
+  return data;
+}
+ 
+export async function getSubscriptionHistory() {
+  const { data } = await api.get<unknown[]>("/subscriptions/history");
+  return data;
+}
+
+export async function verifyHospital(id: number) {
+  const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/verify`);
+  return data;
+}
+ 
+export async function unverifyHospital(id: number) {
+  const { data } = await api.put<HospitalResponse>(`/hospitals/${id}/unverify`);
   return data;
 }
