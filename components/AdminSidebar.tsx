@@ -17,6 +17,7 @@ import {
   ClipboardList,
   Sparkles,
   History as HistoryIcon,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth-context";
@@ -43,6 +44,7 @@ const staticNav: NavItem[] = [
   { href: "/admin/records",           label: "Records",           icon: ClipboardList },
   { href: "/admin/insights",          label: "AI Insights",       icon: Sparkles },
   { href: "/admin/audit-log",         label: "Audit Log",         icon: HistoryIcon },
+  { href: "/admin/subscription",      label: "Subscription",      icon: CreditCard },
 ];
 
 // ─── Hook — live pending count ────────────────────────────

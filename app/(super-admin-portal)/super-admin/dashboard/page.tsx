@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Building2, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Building2, Clock, CheckCircle2, XCircle, IndianRupee, Stethoscope, Users } from "lucide-react";
 import { Topbar } from "@/components/Topbar";
 import { StatCard } from "@/components/ui/StatCard";
 import { Card } from "@/components/ui/Card";
@@ -15,8 +15,9 @@ import {
   getPendingHospitals,
   approveHospital,
   rejectHospital,
+  getPlatformStats,
 } from "@/lib/api";
-import { HospitalResponse } from "@/lib/types";
+import { HospitalResponse, PlatformStats } from "@/lib/types";
 
 export default function SuperAdminDashboardPage() {
   const { showToast } = useToast();
@@ -27,8 +28,11 @@ export default function SuperAdminDashboardPage() {
   const [rejectTarget, setRejectTarget] = useState<HospitalResponse | null>(null);
   const [processingId, setProcessingId] = useState<number | null>(null);
 
+   const [stats, setStats] = useState<PlatformStats | null>(null);
+
   async function load() {
     setLoading(true);
+     getPlatformStats().then(setStats).catch(() => setStats(null));
     try {
       const [pendingData, allData] = await Promise.all([
         getPendingHospitals(),
@@ -89,6 +93,62 @@ export default function SuperAdminDashboardPage() {
       <div className="space-y-8 px-6 pb-10 lg:px-10">
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatCard
+            icon={IndianRupee}
+            label="Monthly recurring revenue"
+            value={
+              !stats
+                ? "—"
+                : `₹${stats.monthlyRecurringRevenue.toLocaleString("en-IN")}`
+            }
+            tone="teal"
+          />
+          <StatCard
+            icon={IndianRupee}
+            label="Total revenue collected"
+            value={
+              !stats
+                ? "—"
+                : `₹${stats.totalRevenueCollected.toLocaleString("en-IN")}`
+            }
+            tone="violet"
+          />
+          <StatCard
+            icon={Stethoscope}
+            label="Doctors on platform"
+            value={!stats ? "—" : String(stats.totalDoctorsOnPlatform)}
+            tone="amber"
+          />
+          <StatCard
+            icon={Users}
+            label="Patients on platform"
+            value={!stats ? "—" : String(stats.totalPatientsOnPlatform)}
+            tone="coral"
+          />
+        </div>
+
+        <Card className="flex items-center justify-around text-center">
+            <div>
+              <p className="font-display text-xl font-semibold text-ink-900">
+                {stats?.trialHospitals ?? "—"}
+              </p>
+              <p className="text-xs text-ink-500">On free trial</p>
+            </div>{" "}
+            <div>
+              <p className="font-display text-xl font-semibold text-ink-900">
+                {stats?.basicSubscribers ?? "—"}
+              </p>
+              <p className="text-xs text-ink-500">Basic plan</p>
+            </div>
+            <div>
+              <p className="font-display text-xl font-semibold text-ink-900">
+                {stats?.premiumSubscribers ?? "—"}
+              </p>
+              <p className="text-xs text-ink-500">Premium plan</p>
+            </div>
+          </Card>
+
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard
             icon={Building2}
             label="Total hospitals"
             value={loading ? "—" : String(allHospitals.length)}
@@ -128,9 +188,14 @@ export default function SuperAdminDashboardPage() {
           ) : (
             <div className="space-y-3">
               {pending.map((h) => (
-                <Card key={h.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <Card
+                  key={h.id}
+                  className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                >
                   <div>
-                    <p className="text-sm font-semibold text-ink-900">{h.name}</p>
+                    <p className="text-sm font-semibold text-ink-900">
+                      {h.name}
+                    </p>
                     <p className="text-xs text-ink-500">
                       {h.address}, {h.city}, {h.state} {h.pincode}
                     </p>
@@ -138,7 +203,9 @@ export default function SuperAdminDashboardPage() {
                       {h.contactEmail} · {h.contactPhone}
                     </p>
                     {h.description && (
-                      <p className="mt-1.5 text-xs text-ink-600">{h.description}</p>
+                      <p className="mt-1.5 text-xs text-ink-600">
+                        {h.description}
+                      </p>
                     )}
                   </div>
                   <div className="flex flex-shrink-0 gap-2">

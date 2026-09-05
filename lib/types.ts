@@ -309,6 +309,7 @@ export interface HospitalResponse {
   description: string;
   logoUrl: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+  verified: boolean;
 }
  
 export interface HospitalRegisterRequest {
@@ -334,6 +335,7 @@ export interface NearbyHospital {
   description: string;
   logoUrl: string | null;
   distanceKm: number;
+  verified: boolean;
 }
  
 export interface NearbyDoctor {
@@ -348,4 +350,32 @@ export interface NearbyDoctor {
   hospitalName: string;
   hospitalCity: string;
   distanceKm: number;
+}
+
+export interface PlatformStats {
+  totalHospitals: number;
+  approvedHospitals: number;
+  pendingHospitals: number;
+  suspendedHospitals: number;
+  trialHospitals: number;
+  basicSubscribers: number;
+  premiumSubscribers: number;
+  monthlyRecurringRevenue: number;
+  totalRevenueCollected: number;
+  totalDoctorsOnPlatform: number;
+  totalPatientsOnPlatform: number;
+}
+
+export interface Subscription {
+  plan: "NONE" | "TRIAL" | "BASIC" | "PREMIUM";
+  expiresAt: string | null;
+  active: boolean;
+  monthlyPrice: number;
+}
+ 
+export interface SubscriptionPaymentOrder {
+  orderId: string;
+  amountInPaise: number;
+  currency: string;
+  keyId: string;
 }
